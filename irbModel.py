@@ -168,11 +168,11 @@ def granularityAdjustmentCR(myA,myW,gBar,xi,p,c,myAlpha,isApprox=0):
         t2 = Kn*Cn  
     return np.dot(np.power(c,2),t1-t2)/(2*KStar)  
   
-def gaContribution(myA,myW,gBar,xi,myP,c,myC,myAlpha,isApprox=0):
+def gaContribution(myA,myW,gBar,xi,p,c,n,myAlpha,isApprox=0):
     myDelta = getDelta(myA,myAlpha)
     Cn = getC(gBar,xi)
-    RKn = getRK(gBar,myA,myW,myP,myAlpha)
-    Kn = getK(gBar,myA,myW,myP,myAlpha)
+    RKn = getRK(gBar,myA,myW,p,myAlpha)
+    Kn = getK(gBar,myA,myW,p,myAlpha)
     KStar = np.sum(c*Kn)
     myRatio = myLGDRatio(gBar,xi)
     if isApprox==0:
@@ -181,5 +181,5 @@ def gaContribution(myA,myW,gBar,xi,myP,c,myC,myAlpha,isApprox=0):
     else:
         t1 = myDelta*Cn*RKn
         t2 = Kn*Cn  
-    return np.dot(np.power(myC,2),t1-t2)/(2*KStar)      
+    return np.dot(np.power(c[n],2),t1[n]-t2[n])/(2*KStar)      
 
