@@ -1,16 +1,10 @@
 import numpy as np
 import importlib 
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 import pylab
 pylab.ion()
 pylab.show()
-import sys
-import scipy
 import time
-from scipy.interpolate import interp1d
-from scipy.stats import gamma
-from matplotlib import cm
 import seaborn as sns
 sns.set()
 '''
@@ -109,7 +103,7 @@ plt.plot(var[:,0]+GA,alpha,color='gray',linestyle=':',label='IRB + GA',linewidth
 plt.xlabel('USD')
 plt.ylabel('Quantile')
 plt.legend(loc=4)
-print("Obligor CONTRIBUTIONS at 99.99th quantile.")
+print("(TOP TEN) Obligor VaR CONTRIBUTIONS at 99.99th quantile.")
 myContributions = np.zeros([N])
 for n in range(0,N):
     irbPart = irb.getBaselRiskCapital(p[n],tenor[n],c[n],np.array([0.9999]))
