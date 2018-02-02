@@ -14,7 +14,6 @@ gig = importr('GIGrvg')
 
 importlib.reload(util)
 
-
 def getY(N,M,p,rho,nu,isT):
     G = np.transpose(np.tile(np.random.normal(0,1,M),(N,1)))
     e = np.random.normal(0,1,[M,N])
@@ -178,11 +177,6 @@ def bivariateTCdf(yy,xx,rho,nu):
                    lambda x: yy,args=(rho,nu))
     return t_ans
 
-#def jointDefaultProbability(x1,x2,rho):
-#    support = [[-7, norm.ppf(x1)],[-7, norm.ppf(x2)]]    
-#    f,err = nInt.nquad(bivariateGDensity,support,args=(rho,))
-#    return f
-
 def bivariateGDensity(x1,x2,rho):
     S = np.array([[1,rho],[rho,1]])
     t1 = 2*math.pi*np.sqrt(anp.det(S))
@@ -237,11 +231,6 @@ def calibrateMFT(B,pMean,regionId,nu):
 
 def calibrateT(x,myP,targetRho,nu):
     jointDefaultProb = jointDefaultProbabilityT(myP,myP,x,nu)
-    defaultCorrelation = np.divide(jointDefaultProb-myP**2,myP*(1-myP))
-    return np.abs(defaultCorrelation-targetRho)
-
-def calibrateG(x,myP,targetRho):
-    jointDefaultProb = jointDefaultProbability(myP,myP,x)
     defaultCorrelation = np.divide(jointDefaultProb-myP**2,myP*(1-myP))
     return np.abs(defaultCorrelation-targetRho)
 
