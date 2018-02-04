@@ -30,6 +30,24 @@ def mcThresholdTDecomposition(N,M,S,p,c,rho,nu,isT,myAlpha):
         contributions[:,s,1] = np.sum(esVector,0)/esVector.shape[0]
     return contributions,var,es
 
+def mcThresholdGDecomposition(N,M,S,p,c,rho,nu,isT,myAlpha):
+    contributions = np.zeros([N,S,2])
+    var = np.zeros(S)
+    es = np.zeros(S)
+    K = norm.ppf(p)*np.ones((M,1))        
+    for s in range(0,S):
+        print("Iteration: %d" % (s+1))
+        Y = th.getY(N,M,p,rho,nu,isT)
+        myD = 1*np.less(Y,K)     
+        myLoss = np.sort(np.dot(myD,c),axis=None)
+        el,ul,var[s],es[s]=util.computeRiskMeasures(M,myLoss,np.array([myAlpha]))
+        varVector = c*myD[np.dot(myD,c)==var[s],:]
+        esVector = c*myD[np.dot(myD,c)>=var[s],:]
+        contributions[:,s,0] = np.sum(varVector,0)/varVector.shape[0]
+        contributions[:,s,1] = np.sum(esVector,0)/esVector.shape[0]
+    return contributions,var,es
+
+
 def mcThresholdIndDecomposition(N,M,S,p,c,myAlpha):
     contributions = np.zeros([N,S,2])
     var = np.zeros(S)
@@ -307,3 +325,7 @@ def integrateAllT(y,v,l,n,p,c,p1,p2,whichModel):
     correctPart = getCorrectionPart(l,n,pY,c,t_l)
     return (varPart + esPart + correctPart)*d
 
+def findAlphaGaussian(a,N,M,p,c,l,myRho):
+    elTemp,ulTemp,varTemp,esTemp = th.oneFactorThresholdModel(N,M,p,c,
+                         myRho,0,np.array([a]),0)
+    return 1e4*(l-esTemp[0])**2
