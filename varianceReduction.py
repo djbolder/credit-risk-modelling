@@ -162,3 +162,30 @@ def isThresholdT(N,M,p,c,l,myRho,nu,cm=0):
     eShortfall =  np.mean(np.multiply(L*(L>l),rn))/tailProb        
     return tailProb,eShortfall    
 
+def isThresholdContr(N,M,p,c,l,myRho,nu,cm=0):
+    myShift = (1-2*cm)
+    xhat = scipy.optimize.minimize(meanShiftOF,0.01, 
+                                args=(c,p,l,myRho), 
+                                method='SLSQP', jac=None)                             
+    mu = xhat.x    
+    theta = np.zeros(M)
+    cgf = np.zeros(M)
+    qZ = np.zeros([M,N])
+    G = np.transpose(np.tile(np.random.normal(mu,1,M),(N,1)))
+    e = np.random.normal(0,1,[M,N])
+    W = np.random.chisquare(nu,M)
+    myV = W/myShift
+    V = np.transpose(np.sqrt(np.tile(myV,(N,1))/nu))
+    num = V*myT.ppf(p,nu)*np.ones((M,1))-np.multiply(np.sqrt(myRho),G)
+    pZ = norm.cdf(np.divide(num,np.sqrt(1-myRho)))
+    for n in range(0,M):
+        theta[n] = vc.getSaddlePoint(pZ[n,:],c,l,0.0)
+        qZ[n,:] = getQ(theta[n],c,pZ[n,:])
+        cgf[n] = vc.computeCGF(theta[n],pZ[n,:],c)
+    I = np.transpose(1*np.less(e,norm.ppf(qZ)))
+    L = np.dot(c,I)         
+    rnChi=np.exp(-cm*myV-(nu/2)*np.log(myShift))
+    rnMu=np.exp(-mu*G[:,0]+0.5*mu**2)
+    rnTwist = computeRND(theta,L,cgf)
+    rn = rnChi*rnMu*rnTwist
+    return I,theta,pZ,qZ,cgf,rn

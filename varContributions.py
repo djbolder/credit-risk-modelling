@@ -90,8 +90,6 @@ def computeCGF_3(t,p,c):
 
 def getSaddlePoint(p,c,l,startPoint=0.00025):
     r = scipy.optimize.root(computeCGFRoot,startPoint,args=(p,c,l),method='hybr')
-    #if r.success==False:
-    #    print("Did not converge!" % (np.min(p),np.max(p),np.mean(p)))
     return r.x    
 
 def step(x):
